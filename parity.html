@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Guessing Game</title>
+    <script type="text/javascript"
+            src = "simpleGame_1_0.js"></script>
+    <script type="text/javascript">
+    
+    var scene;
+    var tileset;
+    var ROWS = 5;
+    var COLS = 5;
+    
+    var OFF = 0;
+    var ON = 1;
+    var NUMSTATES = 2;   
+ 
+    function Tile(){
+        tTile = new Sprite(scene, "O.png", 64, 64);
+        tTile.setSpeed(0);
+        tTile.state = OFF;
+        tTile.images = new Array("O.png", "X.png");
+        tTile.row = 0;
+        tTile.col = 0;
+        
+        tTile.setState = function(state){
+            this.state = state;
+            this.setImage(this.images[this.state]);
+        } // end setState
+        
+        tTile.getRow = function(){
+            return this.row;
+        } // end getRow
+        
+        tTile.getCol = function(){
+            return this.col;
+        } // end getCol;
+        
+        tTile.getState = function(){
+            return this.state;
+        } // end getState
+        
+        tTile.checkMouse = function(){
+            if (this.isClicked()){
+              if (this.state == OFF){
+                this.setState(ON);
+              } else {
+                this.setState(OFF);    
+              } // end if
+              scene.stop();
+            } // end clicked if
+        } // end if
+        
+        return tTile;
+    } // end Tile constructor
+
+    function setupTiles(){
+        tileset = new Array(ROWS);
+        for (row = 0; row < ROWS; row++){
+            tRow = new Array(COLS);
+            for (col = 0; col < COLS; col++){
+                tRow[col] = new Tile();
+                xPos = 32 + (64 * col);
+                yPos = 32 + (64 * row);
+                tRow[col].setPosition(xPos, yPos);
+                tRow[col].row = row;
+                tRow[col].col = col;
+            } // end col for loop
+            tileset[row] = tRow;
+        } // end row for loop;
+    } // end setupTiles
+    
+    function updateTiles(){
+        for (row = 0; row < ROWS; row++){
+            for (col = 0; col < COLS; col++){
+                tileset[row][col].checkMouse();
+                tileset[row][col].update();
+            } // end col for loop
+        } // end row for
+    } // end updateTiles
+    
+    function loadMap(){
+        // loads a map from an array
+        map = new Array(
+          new Array(0,0,0,0,0),
+          new Array(0,0,0,0,1),
+          new Array(0,0,0,1,0),
+          new Array(0,0,1,0,0),
+          new Array(0,1,0,0,0)
+        );
+        
+        for (row = 0; row < ROWS; row++){
+            for (col = 0; col < COLS; col++){
+                currentVal = map[row][col];
+                tileset[row][col].setState(currentVal);
+            } // end col for loop
+        } // end row for
+    } // end loadMap
+
+    function generateMap(){
+      // generates a random even-parity map
+      var rowCount, colCount
+      for (var row = 0; row < ROWS -1; row++){
+        rowCount = 0;
+        for (var col = 0; col < COLS -1; col++){
+          var roll = Math.random();
+          if (roll > .5){
+            rowCount++;
+            tileset[row][col].setState(ON);
+          } else {
+            tileset[row][col].setState(OFF);
+          } // end if
+        } // end col for
+        // set parity bit as needed
+        if (rowCount % 2 == 1){
+          tileset[row][COLS-1].setState(ON);
+        } // end if
+      } // end row for
+
+
+      // check for column parity
+      for (col = 0; col < COLS -1; col++){
+        colCount = 0;
+        for (row = 0; row < ROWS -1; row++){
+          if (tileset[row][col].getState() == ON){
+            colCount++;
+          } // end if
+        } //end row for
+        // set parity bit if needed
+        if (colCount % 2 == 1){
+          tileset[ROWS-1][col].setState(ON);
+         } //end if
+      } // end col for
+
+      // check for final row parity
+      rowCount = 0;
+      for (col = 0; col < COLS - 1; col++){
+        if (tileset[ROWS-1][col].getState() == ON){
+          rowCount++;
+        } // end if
+      } // end for
+
+      // set parity as needed
+      if (rowCount % 2 == 1){
+        tileset[ROWS-1][COLS - 1].setState(ON);
+      } // end if
+
+    } // end function
+ 
+    function init(){
+        scene = new Scene();
+        scene.setSize(320, 320);
+        scene.setBG("#CC0000");
+        setupTiles();
+        //loadMap();
+        generateMap();
+        scene.start();
+    } // end init
+    
+    function update(){
+        scene.clear();
+        checkKeys();
+        updateTiles();
+    } // end update
+
+    function checkKeys(){
+      if (keysDown[K_R]){
+        reset();
+      } // end if
+
+      if (keysDown[K_P]){
+        pickCell();
+      } // end if
+    } // end checkKeys
+
+    function reset(){
+      // use dirty JS trick to reset page
+      document.location.href = "";
+    } // end reset
+
+    function pickCell(){
+      // randomly pick a cell to swap
+      var row = parseInt(Math.random() * ROWS);
+      var col = parseInt(Math.random() * COLS);
+
+      console.log("(" + row + ", " + col + ")");
+
+      if (tileset[row][col].getState() == ON){
+        tileset[row][col].setState(OFF);
+      } else {
+        tileset[row][col].setState(ON);
+      } // end if
+
+      scene.stop();
+    } // end picCell 
+
+    
+    </script>
+</head>
+<body onload = "init()">
+
+
+</body>
+</html>

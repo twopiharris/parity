@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>tileBasedWorld.html</title>
+    <script type="text/javascript"
+            src = "../simpleGame.js"></script>
+    <script type="text/javascript">
+    //tile images from lpc Atlas - openGameArt
+    //http://opengameart.org/content/lpc-tile-atlas
+    var scene;
+    var tileset;
+    var ROWS = 15;
+    var COLS = 20;
+    
+    var GRASS = 0;
+    var DIRT = 1;
+    var WATER = 2;
+    var NUMSTATES = 3;
+    
+    function Tile(){
+        tTile = new Sprite(scene, "grass.png", 32, 32);
+        tTile.setSpeed(0);
+        tTile.state = GRASS;
+        tTile.images = new Array("grass.png", "dirt.png", "water.png");
+        tTile.row = 0;
+        tTile.col = 0;
+        
+        tTile.setState = function(state){
+            this.state = state;
+            this.setImage(this.images[this.state]);
+        } // end setState
+        
+        tTile.getRow = function(){
+            return this.row;
+        } // end getRow
+        
+        tTile.getCol = function(){
+            return this.col;
+        } // end getCol;
+        
+        tTile.getState = function(){
+            return this.state;
+        } // end getState
+        
+        tTile.checkMouse = function(){
+            if (this.isClicked()){
+                
+                newState = this.state;
+                newState++;
+                if (newState >= NUMSTATES){
+                    newState = 0;
+                } // end if
+                
+                this.setState(newState);
+            } // end if
+        } // end if
+        
+        return tTile;
+    } // end Tile constructor
+
+    function setupTiles(){
+        tileset = new Array(ROWS);
+        for (row = 0; row < ROWS; row++){
+            tRow = new Array(COLS);
+            for (col = 0; col < COLS; col++){
+                tRow[col] = new Tile();
+                xPos = 16 + (32 * col);
+                yPos = 16 + (32 * row);
+                tRow[col].setPosition(xPos, yPos);
+                tRow[col].row = row;
+                tRow[col].col = col;
+            } // end col for loop
+            tileset[row] = tRow;
+        } // end row for loop;
+    } // end setupTiles
+    
+    function updateTiles(){
+        for (row = 0; row < ROWS; row++){
+            for (col = 0; col < COLS; col++){
+                tileset[row][col].checkMouse();
+                tileset[row][col].update();
+            } // end col for loop
+        } // end row for
+    } // end updateTiles
+    
+    function loadMap(){
+        // loads a map from an array
+        map = new Array(
+          new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),  
+          new Array(1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0),  
+          new Array(2,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2),  
+          new Array(2,2,2,2,2,2,0,0,0,0,1,0,0,0,0,0,2,2,2,2),  
+          new Array(0,2,2,2,2,2,2,0,0,0,1,0,0,0,2,2,2,2,2,0),  
+          new Array(0,0,0,0,0,0,2,2,2,2,1,2,2,2,2,2,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,2,2,2,1,2,2,2,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),  
+          new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),  
+          new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)  
+        );
+        
+        for (row = 0; row < ROWS; row++){
+            for (col = 0; col < COLS; col++){
+                currentVal = map[row][col];
+                tileset[row][col].setState(currentVal);
+            } // end col for loop
+        } // end row for
+    } 
+    
+    function init(){
+        scene = new Scene();
+        scene.setSize(640, 480);
+        setupTiles();
+        loadMap();
+        scene.start();
+    } // end init
+    
+    function update(){
+        scene.clear();
+        updateTiles();
+    } // end update
+    
+    </script>
+</head>
+<body onload = "init()">
+    
+</body>
+</html>

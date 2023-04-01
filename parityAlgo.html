@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html lang = "en-us">
+<head>
+  <title>Parity Algorithm</title>
+  <meta charset = "utf-8" />
+</head>
+
+<body>
+  <h1>Guessing Game Algorithm</h2>
+
+  <h2>Data</h2>
+  <ul>
+    <li><strong>ROWS</strong> int constant # of rows</li>
+    <li><strong>COLS</strong> int constant 3 of columns</li>
+    <li><strong>cell</strong> custom object with ON and OFF states</li>
+    <li><strong>tileset</strong> ROWS by COLS 2D array of cells</li>
+  </ul>
+
+
+  <h2>Cell custom object </h2>
+  <ul>
+    <li>inherited from simpleGame.Sprite object</li>
+    <li>state int or enumeration ON or OFF</li>
+    <li>getState() and setState()</li>
+  </ul>
+
+  <h2>Initialize grid</h2>
+  <ul>
+    <li>Create tileset as 2d array of cells ROWS by COLS</li>
+    <li>Set initial state of each tile to off</li>
+    <li>Display the tiles on the screen (inherited from sprite)</li>
+  </ul>
+
+  <h2>Randomize grid</h2>
+  <ul>
+    <li>For each row in ROWS -1 </li>
+    <ul>
+      <li>set an int rowCounter to 0</li>
+      <li>for each col in COLS -1</li>
+      <ul>
+        <li>Roll a random float 0 to 1</li>
+        <li>if that value is larger than .5:</li>
+        <ul>
+          <li>set the current cell's state to ON</li>
+          <li>add one to the rowCounter</li>
+        </ul>
+      </ul>
+      <li>if rowCounter is odd</li>
+      <ul>
+        <li>set state of last cell in this row to ON</li>
+      </ul>
+    </ul>
+    <li>Set parity of final row</li>
+    <li>for each col in COLS - 1</li>
+    <ul>
+      <li>set int colCounter to zero</li>
+      <li>for each row in ROWS</li>
+      <ul>
+        <li>if current cell's state is ON</li>
+        <ul>
+          <li>Add one to colCounter</li>
+        </ul>
+      </ul>
+      <li>if colCounter is odd</li>
+      <ul>
+        <li>set state of last cell in this coloumn to ON</li>
+      </ul>
+    </ul>
+  </ul>
+  
+</body>
+
+</html>
+
